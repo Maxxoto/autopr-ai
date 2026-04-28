@@ -170,3 +170,37 @@ export async function postReviewComment(options: {
     return data.html_url;
   }
 }
+
+export async function approvePR(options: {
+  owner: string;
+  repo: string;
+  pullNumber: number;
+  body?: string;
+}): Promise<string> {
+  const octokit = await getClient();
+  const { data } = await octokit.rest.pulls.createReview({
+    owner: options.owner,
+    repo: options.repo,
+    pull_number: options.pullNumber,
+    body: options.body ?? 'Approved by autopr AI review',
+    event: 'APPROVE',
+  });
+  return data.html_url;
+}
+
+export async function requestChanges(options: {
+  owner: string;
+  repo: string;
+  pullNumber: number;
+  body: string;
+}): Promise<string> {
+  const octokit = await getClient();
+  const { data } = await octokit.rest.pulls.createReview({
+    owner: options.owner,
+    repo: options.repo,
+    pull_number: options.pullNumber,
+    body: options.body,
+    event: 'REQUEST_CHANGES',
+  });
+  return data.html_url;
+}
