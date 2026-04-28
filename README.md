@@ -1,6 +1,6 @@
 <div align="center">
 
-# `autopr`
+# `autopr :zap:`
 
 **Stop writing commit messages. Stop writing PR descriptions. Start shipping.**
 
