@@ -138,3 +138,35 @@ export async function findPRForBranch(options: {
 
   return extractPRInfo(data[0]);
 }
+
+export async function postReviewComment(options: {
+  owner: string;
+  repo: string;
+  pullNumber: number;
+  body: string;
+}): Promise<string> {
+  const octokit = await getClient();
+
+  try {
+    // Try posting as a proper PR review first
+    const { data } = await octokit.rest.pulls.createReview({
+      owner: options.owner,
+      repo: options.repo,
+      pull_number: options.pullNumber,
+      body: options.body,
+      event: "COMMENT",
+    });
+
+    return data.html_url;
+  } catch {
+    // Fallback: post as a regular issue comment (fewer permissions required)
+    const { data } = await octokit.rest.issues.createComment({
+      owner: options.owner,
+      repo: options.repo,
+      issue_number: options.pullNumber,
+      body: options.body,
+    });
+
+    return data.html_url;
+  }
+}

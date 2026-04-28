@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import pc from 'picocolors';
 import { requireAuth, getAuthStatus } from '../lib/github/auth.js';
 import { getReviewRequests, generateAIReview } from '../lib/github/reviews.js';
-import { getPRDiff } from '../lib/github/pr.js';
+import { getPRDiff, postReviewComment } from '../lib/github/pr.js';
 import { sendReviewNotification, showReviewMenu, openInBrowser } from '../lib/ui/notify.js';
 import { createSpinner, spinnerSucceed } from '../lib/ui/spinner.js';
 import { getWatchInterval } from '../lib/config/store.js';
@@ -104,6 +104,20 @@ export function registerWatchCommand(program: Command): void {
               process.stdout.write(pc.dim('─'.repeat(50)) + '\n');
               process.stdout.write(`${review}\n`);
               process.stdout.write(pc.dim('─'.repeat(50)) + '\n\n');
+
+              const commentSpinner = createSpinner('Posting review to GitHub...');
+              try {
+                const reviewUrl = await postReviewComment({
+                  owner,
+                  repo,
+                  pullNumber: pr.number,
+                  body: `## 🤖 AI Review by autopr\n\n${review}`,
+                });
+                spinnerSucceed(commentSpinner, `Review posted: ${reviewUrl}`);
+              } catch {
+                spinnerSucceed(commentSpinner, pc.yellow('Review displayed locally (failed to post to GitHub)'));
+              }
+              console.log('');
             }
           }
         } catch {
