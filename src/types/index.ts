@@ -45,9 +45,9 @@ export const PROVIDER_DEFAULTS: Record<AIProvider, {
     needsBaseURL: false,
   },
   groq: {
-    model: 'llama-3.3-70b-versatile',
+    model: 'gpt-oss-120b',
     envKey: 'GROQ_API_KEY',
-    label: 'Groq (Llama 3.3 70B)',
+    label: 'Groq (GPT-OSS 120B)',
     costTier: 'Free tier available',
     needsBaseURL: false,
   },

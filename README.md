@@ -329,7 +329,7 @@ autopr auth status              # show current auth state
 | **OpenAI** | GPT-4o, o1, o3 | $$$ Pay-per-use |
 | **Anthropic** | Claude Sonnet 4, Claude Haiku | $$$ Pay-per-use |
 | **DeepSeek** | DeepSeek Chat, DeepSeek Reasoner | $ Very affordable |
-| **Groq** | Llama 3.3 70B, Mixtral | Free tier available |
+| **Groq** | GPT-OSS 120B | Free tier available |
 | **OpenRouter** | All providers via single key | $$ Depends on model |
 | **OpenAI-Compatible** | LiteLLM, Ollama, any OpenAI API | Free Self-hosted |
 
