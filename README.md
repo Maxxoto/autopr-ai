@@ -11,7 +11,7 @@
 AI-powered CLI that watches your repo, generates conventional commits,<br>
 creates pull requests, and reviews code — all from your terminal.
 
-[Install](#install) · [Quick Start](#quick-start) · [Commands](#commands) · [Configuration](#configuration) · [Contributing](#contributing)
+[Install](#install) · [Quick Start](#quick-start) · [Commands](#commands) · [Configuration](#configuration) · [Contributing](CONTRIBUTING.md)
 
 </div>
 
@@ -375,83 +375,15 @@ Create one at: https://github.com/settings/tokens/new?description=autopr-cli&sco
 
 ---
 
-## Architecture
-
-```
-src/
-├── index.ts                  # CLI entry (commander)
-├── commands/                 # Command handlers
-│   ├── auth.ts               # auth login/logout/status
-│   ├── commit.ts             # cm — smart commit
-│   ├── create.ts             # cr — smart PR creation
-│   ├── onboard.ts            # onboard — guided setup
-│   ├── review.ts             # AI code review
-│   └── watch.ts              # review assignment watcher
-├── lib/
-│   ├── ai/                   # LLM integration (Vercel AI SDK)
-│   │   ├── commit.ts         # conventional commit generation
-│   │   ├── pr.ts             # PR title/description generation
-│   │   └── registry.ts       # multi-provider AI registry
-│   ├── config/store.ts       # persistent config (~/.config/autopr)
-│   ├── git/                  # git operations (simple-git)
-│   ├── github/               # GitHub API (Octokit)
-│   └── ui/                   # spinners, prompts, notifications
-└── types/index.ts            # shared TypeScript types
-```
-
-**Key design decisions:**
-- **Vercel AI SDK** for multi-provider LLM support — OpenAI, Anthropic, DeepSeek, Groq, OpenRouter, or any OpenAI-compatible API
-- **Commander** for CLI framework — lightweight, flexible
-- **Octokit** for GitHub API — official SDK with pagination and rate limiting
-- **simple-git** for git operations — type-safe, promise-based
-- **AI fallback** — if the LLM fails, falls back to heuristic-based analysis (no crash)
-
----
-
-## Development
-
-```bash
-# Clone and install
-git clone https://github.com/Maxxoto/autopr.git
-cd autopr
-npm install
-
-# Run in dev mode
-npm run autopr -- --help
-npm run autopr -- cm
-
-# Type checking
-npm run typecheck
-
-# Run tests
-npm run test
-
-# Build
-npm run build
-```
-
----
-
 ## Contributing
 
-Contributions are welcome! Here's how to get started:
+Interested in contributing? Check out the **[Contributing Guide](CONTRIBUTING.md)** for:
 
-1. **Fork** the repository
-2. **Create a feature branch**: `git checkout -b feat/my-feature`
-3. **Make your changes** — follow existing patterns in `src/`
-4. **Run checks**: `npm run typecheck && npm run test`
-5. **Submit a PR** — use `autopr cr` to create it 😉
-
-### Ideas for contributions
-
-- [x] ~~Anthropic Claude provider support~~ (now built-in via Vercel AI SDK)
-- [ ] GitLab support
-- [ ] Bitbucket support
-- [ ] Custom commit message templates
-- [ ] PR template support (`.github/PULL_REQUEST_TEMPLATE.md`)
-- [ ] Config file support (`.autopr.json`)
-- [ ] Interactive rebase integration
-- [ ] GitHub Actions integration (AI review on PR open)
+- 🛠️ Development setup
+- 🏗️ Project architecture
+- 📋 Contribution workflow
+- 💡 Ideas for contributions
+- 🧪 Running tests
 
 ---
 
