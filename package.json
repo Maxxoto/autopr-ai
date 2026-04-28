@@ -1,5 +1,5 @@
 {
-  "name": "autopr",
+  "name": "@maxxoto/autopr",
   "version": "0.1.0",
   "description": "CLI tool for automated PR review, smart commits, and PR creation",
   "type": "module",

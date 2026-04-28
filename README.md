@@ -4,7 +4,7 @@
 
 **Stop writing commit messages. Stop writing PR descriptions. Start shipping.**
 
-[![npm version](https://img.shields.io/npm/v/autopr?color=blue)](https://www.npmjs.com/package/autopr)
+[![npm version](https://img.shields.io/npm/v/@maxxoto/autopr?color=blue)](https://www.npmjs.com/package/@maxxoto/autopr)
 [![license](https://img.shields.io/github/license/Maxxoto/autopr)](https://github.com/Maxxoto/autopr/blob/main/LICENSE)
 [![node](https://img.shields.io/node/v/autopr)](https://nodejs.org)
 
@@ -59,13 +59,13 @@ Plus `autopr auth` to manage your GitHub token and `autopr review` to AI-review 
 ### npm (recommended)
 
 ```bash
-npm install -g autopr
+npm install -g @maxxoto/autopr
 ```
 
 ### Homebrew
 
 ```bash
-brew install Maxxoto/tap/autopr
+brew install @maxxoto/tap/autopr
 ```
 
 ### From source
