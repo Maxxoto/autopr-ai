@@ -392,7 +392,7 @@ Contributions are welcome! Here's how to get started:
 
 ## License
 
-[MIT](LICENSE) — use it however you want.
+[MIT](LICENSE) — use it however you want ❤️.
 
 ---
 
