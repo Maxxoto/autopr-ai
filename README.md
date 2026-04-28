@@ -41,10 +41,11 @@ creates pull requests, and reviews code — all from your terminal.
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**Three commands. That's it.**
+**One command to set up, then three commands to ship.**
 
 | Command | Alias | What happens |
 |---------|-------|-------------|
+| `autopr onboard` | — | First-time setup: GitHub auth + AI provider → ready to go |
 | `autopr cm` | `commit` | Reads your staged diff → generates a conventional commit → commits |
 | `autopr cr` | `create` | Reads your branch diff → generates PR title + description → pushes + creates PR |
 | `autopr watch` | — | Polls GitHub → notifies when you're assigned as reviewer → AI review or open in browser |
@@ -102,26 +103,66 @@ npm run autopr -- cr          # create PR
 
 ## Quick Start
 
-### 1. Authenticate
+### 1. Onboard (one-time setup)
 
 ```bash
-$ autopr auth login
+$ autopr onboard
 ```
 
 ```
-  GitHub Authentication
-  ─────────────────────
+  Welcome to autopr! Let's get you set up.
+  ════════════════════════════════════════
 
-  You'll need a Personal Access Token with these scopes:
+  Step 1/2: GitHub Authentication
+  ────────────────────────────────
+  You'll need a Personal Access Token with:
     ✓ repo   (full control of repositories)
     ✓ read:org (read org membership)
-
   ? Open GitHub token page in browser? Yes
   Opening browser...
-
   ? Paste your token: ****
   ✔ Authenticated as your-username
+
+  Step 2/2: AI Provider Setup
+  ───────────────────────────
+  ? Choose your AI provider:
+  ❯ OpenAI (GPT-4o) — $$$ Pay-per-use
+    Anthropic (Claude Sonnet) — $$$ Pay-per-use
+    DeepSeek (DeepSeek Chat) — $ Very affordable
+    Groq (Llama 3.3 70B) — Free tier available
+    OpenRouter (Multi-model) — $$ Depends on model
+    OpenAI-Compatible (LiteLLM/Ollama/Custom) — Free Self-hosted
+
+  ? Enter your OpenAI API key: ****
+  ✔ API key saved
+
+  ────────────────────────────────
+  ✔ Setup complete!
+
+  Configuration summary:
+    GitHub:  your-username @ github.com
+    AI:      OpenAI — gpt-4o — sk-...7x3k
+
+  Try these commands:
+    autopr cm      — smart commits
+    autopr cr      — create PRs
+    autopr review  — AI code review
+    autopr watch   — watch for reviews
 ```
+
+**That's it.** One command and you're ready to go.
+
+<details>
+<summary>Manual setup (alternative)</summary>
+
+```bash
+autopr auth login                    # GitHub auth
+autopr auth status                   # Check auth state
+```
+
+Set your AI provider via environment variables or `~/.config/autopr/` config.
+
+</details>
 
 ### 2. Smart Commit
 
@@ -211,6 +252,16 @@ Select **AI Review Assist** and get an instant structured review:
 
 ## Commands
 
+### `autopr onboard`
+
+Guided first-time setup for GitHub auth and AI provider.
+
+```bash
+autopr onboard    # interactive setup wizard
+```
+
+Running bare `autopr` with no subcommand will auto-launch onboard if not yet configured.
+
 ### `autopr cm` / `autopr commit`
 
 Generate a conventional commit from staged changes.
@@ -269,35 +320,47 @@ autopr auth status              # show current auth state
 
 ## Configuration
 
-### AI Provider
+### AI Providers
 
-`autopr` uses the [OpenAI SDK](https://github.com/openai/openai-node) with a **configurable base URL** — so it works with any OpenAI-compatible API:
+`autopr` supports **6 AI providers** through the [Vercel AI SDK](https://ai-sdk.dev/):
+
+| Provider | Models | Cost |
+|----------|--------|------|
+| **OpenAI** | GPT-4o, o1, o3 | $$$ Pay-per-use |
+| **Anthropic** | Claude Sonnet 4, Claude Haiku | $$$ Pay-per-use |
+| **DeepSeek** | DeepSeek Chat, DeepSeek Reasoner | $ Very affordable |
+| **Groq** | Llama 3.3 70B, Mixtral | Free tier available |
+| **OpenRouter** | All providers via single key | $$ Depends on model |
+| **OpenAI-Compatible** | LiteLLM, Ollama, any OpenAI API | Free Self-hosted |
+
+Configure via `autopr onboard` (recommended) or environment variables:
 
 ```bash
-# OpenAI (default)
+# OpenAI
 export OPENAI_API_KEY=sk-...
-export OPENAI_MODEL=gpt-4o
 
-# LiteLLM proxy (unified interface to 100+ LLMs)
-export OPENAI_API_KEY=your-key
-export OPENAI_BASE_URL=http://localhost:4000/v1
-export OPENAI_MODEL=gpt-4o
+# Anthropic
+export ANTHROPIC_API_KEY=sk-ant-...
 
-# Ollama (local)
+# DeepSeek
+export DEEPSEEK_API_KEY=dsk-...
+
+# Groq
+export GROQ_API_KEY=gsk_...
+
+# OpenRouter
+export OPENROUTER_API_KEY=sk-or-...
+
+# OpenAI-Compatible (LiteLLM, Ollama, etc.)
+export OPENAI_COMPAT_API_KEY=your-key
 export OPENAI_BASE_URL=http://localhost:11434/v1
 export OPENAI_MODEL=llama3
-export OPENAI_API_KEY=ollama
-
-# Any OpenAI-compatible API
-export OPENAI_BASE_URL=https://your-api.com/v1
 ```
 
-Or set via environment variables in `.env`:
-
+Or set in `.env`:
 ```bash
-OPENAI_API_KEY=sk-...
-OPENAI_BASE_URL=https://api.openai.com/v1
-OPENAI_MODEL=gpt-4o
+ANTHROPIC_API_KEY=sk-ant-...
+# or any other provider key
 ```
 
 ### GitHub Token
@@ -321,12 +384,14 @@ src/
 │   ├── auth.ts               # auth login/logout/status
 │   ├── commit.ts             # cm — smart commit
 │   ├── create.ts             # cr — smart PR creation
+│   ├── onboard.ts            # onboard — guided setup
 │   ├── review.ts             # AI code review
 │   └── watch.ts              # review assignment watcher
 ├── lib/
-│   ├── ai/                   # LLM integration (OpenAI SDK)
+│   ├── ai/                   # LLM integration (Vercel AI SDK)
 │   │   ├── commit.ts         # conventional commit generation
-│   │   └── pr.ts             # PR title/description generation
+│   │   ├── pr.ts             # PR title/description generation
+│   │   └── registry.ts       # multi-provider AI registry
 │   ├── config/store.ts       # persistent config (~/.config/autopr)
 │   ├── git/                  # git operations (simple-git)
 │   ├── github/               # GitHub API (Octokit)
@@ -335,10 +400,10 @@ src/
 ```
 
 **Key design decisions:**
+- **Vercel AI SDK** for multi-provider LLM support — OpenAI, Anthropic, DeepSeek, Groq, OpenRouter, or any OpenAI-compatible API
 - **Commander** for CLI framework — lightweight, flexible
 - **Octokit** for GitHub API — official SDK with pagination and rate limiting
 - **simple-git** for git operations — type-safe, promise-based
-- **OpenAI SDK with configurable baseURL** — works with LiteLLM, Ollama, any compatible API
 - **AI fallback** — if the LLM fails, falls back to heuristic-based analysis (no crash)
 
 ---
@@ -379,7 +444,7 @@ Contributions are welcome! Here's how to get started:
 
 ### Ideas for contributions
 
-- [ ] Anthropic Claude provider support
+- [x] ~~Anthropic Claude provider support~~ (now built-in via Vercel AI SDK)
 - [ ] GitLab support
 - [ ] Bitbucket support
 - [ ] Custom commit message templates

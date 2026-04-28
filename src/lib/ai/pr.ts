@@ -1,68 +1,21 @@
-import OpenAI from "openai";
-import { getAIConfig } from "../config/store.js";
-import type { AIConfig } from "../../types/index.js";
-
-let aiClient: OpenAI | null = null;
-
-function getClient(config?: AIConfig): OpenAI {
-  if (aiClient) {
-    return aiClient;
-  }
-
-  const aiConfig = config ?? getAIConfig();
-  const apiKey = aiConfig.apiKey || process.env.OPENAI_API_KEY;
-  const baseURL =
-    aiConfig.baseURL ||
-    process.env.OPENAI_BASE_URL ||
-    "https://api.openai.com/v1";
-
-  if (!apiKey) {
-    throw new Error(
-      "OpenAI API key not configured. Set it via `autopr config` or OPENAI_API_KEY env var."
-    );
-  }
-
-  aiClient = new OpenAI({
-    apiKey,
-    baseURL,
-  });
-
-  return aiClient;
-}
+import { callAI } from "./registry.js";
 
 export async function generatePRTitle(
   diff: string,
   commits: string[]
 ): Promise<string> {
-  const config = getAIConfig();
-
   try {
-    const client = getClient(config);
-    const model = config.model || "gpt-4o";
-
     const userContent = [
       `Commits:\n${commits.join("\n")}`,
       `\nDiff:\n${diff.slice(0, 8000)}`,
     ].join("\n");
 
-    const response = await client.chat.completions.create({
-      model,
-      messages: [
-        {
-          role: "system",
-          content:
-            "Generate a concise PR title (≤72 chars, imperative mood) from these changes. Return ONLY the title, no quotes.",
-        },
-        {
-          role: "user",
-          content: userContent,
-        },
-      ],
+    const title = await callAI({
+      system: 'Generate a concise PR title (≤72 chars, imperative mood) from these changes. Return ONLY the title, no quotes.',
+      user: userContent,
       temperature: 0.3,
-      max_tokens: 100,
     });
 
-    const title = response.choices[0]?.message?.content?.trim() ?? "";
     if (!title) {
       throw new Error("Empty title from AI");
     }
@@ -82,35 +35,18 @@ export async function generatePRDescription(
   diff: string,
   commits: string[]
 ): Promise<string> {
-  const config = getAIConfig();
-
   try {
-    const client = getClient(config);
-    const model = config.model || "gpt-4o";
-
     const userContent = [
       `Commits:\n${commits.join("\n")}`,
       `\nDiff:\n${diff.slice(0, 12000)}`,
     ].join("\n");
 
-    const response = await client.chat.completions.create({
-      model,
-      messages: [
-        {
-          role: "system",
-          content:
-            "Generate a PR description in markdown with sections: ## Summary (1-2 sentences), ## Changes (bulleted list of specific changes), ## Testing (how to verify). Return ONLY markdown.",
-        },
-        {
-          role: "user",
-          content: userContent,
-        },
-      ],
+    const description = await callAI({
+      system: 'Generate a PR description in markdown with sections: ## Summary (1-2 sentences), ## Changes (bulleted list of specific changes), ## Testing (how to verify). Return ONLY markdown.',
+      user: userContent,
       temperature: 0.3,
-      max_tokens: 1000,
     });
 
-    const description = response.choices[0]?.message?.content?.trim() ?? "";
     if (!description) {
       throw new Error("Empty description from AI");
     }

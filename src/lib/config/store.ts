@@ -1,5 +1,6 @@
 import Conf from 'conf';
-import type { AIConfig } from '../../types/index.js';
+import type { AIProviderConfig, AIProvider } from '../../types/index.js';
+import { PROVIDER_DEFAULTS } from '../../types/index.js';
 
 type ConfigSchema = {
   github: {
@@ -8,10 +9,11 @@ type ConfigSchema = {
     hostname?: string;
   };
   ai: {
-    baseURL?: string;
+    provider?: string;
     apiKey?: string;
     model?: string;
     maxTokens?: number;
+    baseURL?: string;
   };
   watchInterval?: number;
 };
@@ -56,22 +58,43 @@ export function setGitHubUser(username: string, hostname: string): void {
   config.set('github.hostname', hostname);
 }
 
-export function getAIConfig(): AIConfig {
+export function getAIConfig(): AIProviderConfig {
   const config = getConfig();
+  const provider = (config.get('ai.provider') as AIProvider) || '';
+
+  if (!provider) {
+    const baseURL = config.get('ai.baseURL') || process.env.OPENAI_BASE_URL;
+    const apiKey = config.get('ai.apiKey') || process.env.OPENAI_API_KEY;
+    if (baseURL || apiKey) {
+      return {
+        provider: 'openai-compatible',
+        apiKey: apiKey || '',
+        model: config.get('ai.model') || process.env.OPENAI_MODEL || 'gpt-4',
+        maxTokens: config.get('ai.maxTokens') ?? 4096,
+        baseURL: baseURL || 'https://api.openai.com/v1',
+      };
+    }
+  }
+
+  const defaults = provider ? PROVIDER_DEFAULTS[provider as keyof typeof PROVIDER_DEFAULTS] : undefined;
+  const envKey = defaults?.envKey || 'OPENAI_API_KEY';
+
   return {
-    apiKey: config.get('ai.apiKey') ?? process.env.OPENAI_API_KEY ?? '',
-    baseURL: config.get('ai.baseURL') ?? process.env.OPENAI_BASE_URL ?? 'https://api.openai.com/v1',
-    model: config.get('ai.model') ?? process.env.OPENAI_MODEL ?? 'gpt-4',
+    provider: (provider || 'openai') as AIProvider,
+    apiKey: config.get('ai.apiKey') || process.env[envKey] || process.env.OPENAI_API_KEY || '',
+    model: config.get('ai.model') || defaults?.model || process.env.OPENAI_MODEL || 'gpt-4o',
     maxTokens: config.get('ai.maxTokens') ?? 4096,
+    ...(config.get('ai.baseURL') ? { baseURL: config.get('ai.baseURL') } : {}),
   };
 }
 
-export function setAIConfig(partial: Partial<AIConfig>): void {
+export function setAIConfig(partial: Partial<AIProviderConfig>): void {
   const config = getConfig();
+  if (partial.provider !== undefined) config.set('ai.provider', partial.provider);
   if (partial.apiKey !== undefined) config.set('ai.apiKey', partial.apiKey);
-  if (partial.baseURL !== undefined) config.set('ai.baseURL', partial.baseURL);
   if (partial.model !== undefined) config.set('ai.model', partial.model);
   if (partial.maxTokens !== undefined) config.set('ai.maxTokens', partial.maxTokens);
+  if (partial.baseURL !== undefined) config.set('ai.baseURL', partial.baseURL);
 }
 
 export function getWatchInterval(): number {
@@ -80,6 +103,17 @@ export function getWatchInterval(): number {
 
 export function isAuthenticated(): boolean {
   return typeof getGitHubToken() === 'string' && getGitHubToken()!.length > 0;
+}
+
+export function isAIConfigured(): boolean {
+  const config = getConfig();
+  const provider = config.get('ai.provider');
+  const apiKey = config.get('ai.apiKey');
+  return !!(provider && apiKey);
+}
+
+export function isConfigured(): boolean {
+  return isAuthenticated() && isAIConfigured();
 }
 
 export function clearAll(): void {

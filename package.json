@@ -39,15 +39,20 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.71",
+    "@ai-sdk/deepseek": "^2.0.29",
+    "@ai-sdk/groq": "^3.0.35",
+    "@ai-sdk/openai": "^3.0.53",
     "@inquirer/password": "^5.0.12",
     "@inquirer/prompts": "^8.4.2",
     "@octokit/plugin-paginate-rest": "^14.0.0",
     "@octokit/rest": "^22.0.1",
+    "@openrouter/ai-sdk-provider": "^2.8.1",
+    "ai": "^6.0.168",
     "commander": "^14.0.3",
     "conf": "^15.1.0",
     "node-notifier": "^10.0.1",
     "open": "^10.1.0",
-    "openai": "^6.34.0",
     "ora": "^9.4.0",
     "picocolors": "^1.1.1",
     "simple-git": "^3.36.0"

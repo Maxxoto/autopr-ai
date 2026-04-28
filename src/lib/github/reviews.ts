@@ -1,7 +1,6 @@
-import OpenAI from "openai";
+import { callAI } from "../ai/registry.js";
 import { getClient } from "./client.js";
-import { getAIConfig } from "../config/store.js";
-import type { PRInfo, ReviewInfo, AIConfig } from "../../types/index.js";
+import type { PRInfo, ReviewInfo } from "../../types/index.js";
 
 function mapPRFromGithub(data: {
   number: number;
@@ -29,26 +28,6 @@ function mapPRFromGithub(data: {
     draft: data.draft ?? false,
     requested_reviewers: (data.requested_reviewers ?? []).map((r) => r.login),
   };
-}
-
-function getAIClient(config?: AIConfig): OpenAI {
-  const aiConfig = config ?? getAIConfig();
-  const apiKey = aiConfig.apiKey || process.env.OPENAI_API_KEY;
-  const baseURL =
-    aiConfig.baseURL ||
-    process.env.OPENAI_BASE_URL ||
-    "https://api.openai.com/v1";
-
-  if (!apiKey) {
-    throw new Error(
-      "OpenAI API key not configured. Set it via `autopr config` or OPENAI_API_KEY env var."
-    );
-  }
-
-  return new OpenAI({
-    apiKey,
-    baseURL,
-  });
 }
 
 export async function getReviewRequests(username: string): Promise<PRInfo[]> {
@@ -114,32 +93,14 @@ export async function generateAIReview(
   diff: string,
   prTitle: string
 ): Promise<string> {
-  const config = getAIConfig();
-
   try {
-    const client = getAIClient(config);
-    const model = config.model || "gpt-4o";
-
     const truncatedDiff = diff.slice(0, 16000);
 
-    const response = await client.chat.completions.create({
-      model,
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a senior code reviewer. Analyze the following PR diff and provide a structured review.",
-        },
-        {
-          role: "user",
-          content: `PR Title: ${prTitle}\n\nDiff:\n${truncatedDiff}`,
-        },
-      ],
+    const review = await callAI({
+      system: 'You are a senior code reviewer. Analyze the following PR diff and provide a structured review.',
+      user: `PR Title: ${prTitle}\n\nDiff:\n${truncatedDiff}`,
       temperature: 0.2,
-      max_tokens: 2000,
     });
-
-    const review = response.choices[0]?.message?.content?.trim() ?? "";
 
     if (!review) {
       return generateHeuristicReview(diff, prTitle);

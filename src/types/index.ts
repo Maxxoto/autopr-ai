@@ -1,5 +1,72 @@
 // Shared types for the autopr CLI tool
 
+export type AIProvider = 
+  | 'openai' 
+  | 'anthropic' 
+  | 'deepseek' 
+  | 'groq' 
+  | 'openrouter' 
+  | 'openai-compatible';
+
+export interface AIProviderConfig {
+  provider: AIProvider;
+  apiKey: string;
+  model: string;
+  maxTokens?: number;
+  baseURL?: string;  // only for 'openai-compatible'
+}
+
+export const PROVIDER_DEFAULTS: Record<AIProvider, { 
+  model: string; 
+  envKey: string;
+  label: string;
+  costTier: string;
+  needsBaseURL: boolean;
+}> = {
+  openai: {
+    model: 'gpt-4o',
+    envKey: 'OPENAI_API_KEY',
+    label: 'OpenAI (GPT-4o)',
+    costTier: '$$$ — Pay-per-use',
+    needsBaseURL: false,
+  },
+  anthropic: {
+    model: 'claude-sonnet-4-20250514',
+    envKey: 'ANTHROPIC_API_KEY',
+    label: 'Anthropic (Claude Sonnet)',
+    costTier: '$$$ — Pay-per-use',
+    needsBaseURL: false,
+  },
+  deepseek: {
+    model: 'deepseek-chat',
+    envKey: 'DEEPSEEK_API_KEY',
+    label: 'DeepSeek (DeepSeek Chat)',
+    costTier: '$ — Very affordable',
+    needsBaseURL: false,
+  },
+  groq: {
+    model: 'llama-3.3-70b-versatile',
+    envKey: 'GROQ_API_KEY',
+    label: 'Groq (Llama 3.3 70B)',
+    costTier: 'Free tier available',
+    needsBaseURL: false,
+  },
+  openrouter: {
+    model: 'anthropic/claude-sonnet-4-20250514',
+    envKey: 'OPENROUTER_API_KEY',
+    label: 'OpenRouter (Multi-model)',
+    costTier: '$$ — Depends on model',
+    needsBaseURL: false,
+  },
+  'openai-compatible': {
+    model: 'llama3',
+    envKey: 'OPENAI_COMPAT_API_KEY',
+    label: 'OpenAI-Compatible (LiteLLM/Ollama/Custom)',
+    costTier: 'Free — Self-hosted',
+    needsBaseURL: true,
+  },
+};
+
 export const COMMIT_TYPES = [
   'feat',
   'fix',
@@ -69,12 +136,7 @@ export interface RepoContext {
   defaultBranch: string;
 }
 
-export interface AIConfig {
-  baseURL: string;
-  apiKey: string;
-  model: string;
-  maxTokens: number;
-}
+export type AIConfig = AIProviderConfig;
 
 export interface GitHubAuth {
   token: string;
@@ -84,6 +146,6 @@ export interface GitHubAuth {
 
 export interface Config {
   github: GitHubAuth;
-  ai: AIConfig;
+  ai: AIProviderConfig;
   watchInterval: number;
 }

@@ -1,6 +1,5 @@
-import OpenAI from "openai";
-import { getAIConfig } from "../config/store.js";
-import type { ConventionalCommit, CommitType, AIConfig } from "../../types/index.js";
+import { callAI } from "./registry.js";
+import type { ConventionalCommit, CommitType } from "../../types/index.js";
 
 const VALID_COMMIT_TYPES: readonly string[] = [
   "feat",
@@ -15,34 +14,6 @@ const VALID_COMMIT_TYPES: readonly string[] = [
   "chore",
   "revert",
 ] as const;
-
-let aiClient: OpenAI | null = null;
-
-export function getAIClient(config?: AIConfig): OpenAI {
-  if (aiClient) {
-    return aiClient;
-  }
-
-  const aiConfig = config ?? getAIConfig();
-  const apiKey = aiConfig.apiKey || process.env.OPENAI_API_KEY;
-  const baseURL =
-    aiConfig.baseURL ||
-    process.env.OPENAI_BASE_URL ||
-    "https://api.openai.com/v1";
-
-  if (!apiKey) {
-    throw new Error(
-      "OpenAI API key not configured. Set it via `autopr config` or OPENAI_API_KEY env var."
-    );
-  }
-
-  aiClient = new OpenAI({
-    apiKey,
-    baseURL,
-  });
-
-  return aiClient;
-}
 
 function isValidCommitType(value: string): value is CommitType {
   return VALID_COMMIT_TYPES.includes(value);
@@ -69,12 +40,7 @@ export async function generateCommitMessage(
   diff: string,
   recentCommits?: string[]
 ): Promise<ConventionalCommit> {
-  const config = getAIConfig();
-
   try {
-    const client = getAIClient(config);
-    const model = config.model || "gpt-4o";
-
     const userParts: string[] = [`Diff:\n${diff}`];
     if (recentCommits && recentCommits.length > 0) {
       userParts.push(
@@ -82,24 +48,12 @@ export async function generateCommitMessage(
       );
     }
 
-    const response = await client.chat.completions.create({
-      model,
-      messages: [
-        {
-          role: "system",
-          content:
-            'You are a commit message generator following Conventional Commits v1.0.0. Analyze the diff and generate a commit message. Return ONLY valid JSON: {"type": "feat|fix|...", "scope": "optional", "description": "imperative mood ≤72 chars", "body": "optional detail", "breaking": false}',
-        },
-        {
-          role: "user",
-          content: userParts.join("\n"),
-        },
-      ],
+    const raw = await callAI({
+      system: 'You are a commit message generator following Conventional Commits v1.0.0. Analyze the diff and generate a commit message. Return ONLY valid JSON: {"type": "feat|fix|...", "scope": "optional", "description": "imperative mood ≤72 chars", "body": "optional detail", "breaking": false}',
+      user: userParts.join('\n'),
       temperature: 0.3,
-      max_tokens: 500,
     });
 
-    const raw = response.choices[0]?.message?.content?.trim() ?? "";
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error("No JSON object found in AI response");

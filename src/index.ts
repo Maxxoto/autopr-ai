@@ -7,6 +7,8 @@ import { registerCommitCommand } from './commands/commit.js';
 import { registerCreateCommand } from './commands/create.js';
 import { registerReviewCommand } from './commands/review.js';
 import { registerWatchCommand } from './commands/watch.js';
+import { registerOnboardCommand } from './commands/onboard.js';
+import { isConfigured } from './lib/config/store.js';
 
 const program = new Command();
 
@@ -20,6 +22,15 @@ registerCommitCommand(program);
 registerCreateCommand(program);
 registerReviewCommand(program);
 registerWatchCommand(program);
+registerOnboardCommand(program);
+
+// Auto-redirect to onboard if no subcommand and not configured
+const validCommands = ['onboard', 'auth', 'cm', 'commit', 'cr', 'create', 'review', 'watch'];
+if (!process.argv[2] || (!process.argv[2].startsWith('-') && !validCommands.includes(process.argv[2]))) {
+  if (!isConfigured()) {
+    process.argv.splice(2, 0, 'onboard');
+  }
+}
 
 program.exitOverride();
 
