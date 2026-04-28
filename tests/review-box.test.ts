@@ -2,28 +2,28 @@ import { describe, it, expect } from 'vitest';
 import { hasCriticalIssues, renderReviewBox } from '../src/lib/ui/review-box.js';
 
 describe('hasCriticalIssues', () => {
-  it('detects critical section with emoji', () => {
-    expect(hasCriticalIssues('## 🔴 Critical\n- Hardcoded secret')).toBe(true);
+  it('detects Issues section with bullet points', () => {
+    expect(hasCriticalIssues('## Issues\n- Hardcoded secret')).toBe(true);
   });
 
-  it('detects critical section without emoji', () => {
-    expect(hasCriticalIssues('## Critical\n- Something bad')).toBe(true);
+  it('detects Issues section without bullet (old 🔴 format)', () => {
+    expect(hasCriticalIssues('## 🔴 Issues\n- Something bad')).toBe(true);
   });
 
-  it('returns false for non-critical sections', () => {
-    expect(hasCriticalIssues('## 🟡 Suggestions\n- Refactor')).toBe(false);
+  it('returns false for Suggestions section only', () => {
+    expect(hasCriticalIssues('## Suggestions\n- Refactor')).toBe(false);
   });
 
-  it('returns false for "No critical issues found"', () => {
-    expect(hasCriticalIssues('## 🔴 Critical\nNo critical issues found')).toBe(false);
+  it('returns false for LGTM review', () => {
+    expect(hasCriticalIssues('## LGTM ✅\n\nCode looks clean.')).toBe(false);
   });
 
-  it('returns false for "No critical issues detected"', () => {
-    expect(hasCriticalIssues('## Critical\nNo critical issues detected')).toBe(false);
+  it('returns false for Issues section with no bullets', () => {
+    expect(hasCriticalIssues('## Issues\nNo issues found')).toBe(false);
   });
 
-  it('returns true when critical section has actual issues', () => {
-    expect(hasCriticalIssues('## 🔴 Critical\n- SQL injection\nOther text')).toBe(true);
+  it('returns true when Issues section has actual issues', () => {
+    expect(hasCriticalIssues('## Issues\n- SQL injection\nOther text')).toBe(true);
   });
 
   it('returns false for empty string', () => {
@@ -35,7 +35,7 @@ describe('hasCriticalIssues', () => {
   });
 
   it('matches case-insensitively', () => {
-    expect(hasCriticalIssues('## 🔴 CRITICAL')).toBe(true);
+    expect(hasCriticalIssues('## ISSUES\n- Problem found')).toBe(true);
   });
 });
 

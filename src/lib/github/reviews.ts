@@ -97,7 +97,7 @@ export async function generateAIReview(
     const truncatedDiff = diff.slice(0, 16000);
 
     const review = await callAI({
-      system: 'You are a senior code reviewer. Analyze the following PR diff and provide a structured review.',
+      system: 'You are a friendly code reviewer. Review the PR diff and respond in this format:\n\nIf the code looks good with no issues:\n## LGTM ✅\n\nBrief note on what the change does well (1-2 sentences).\n\nIf there are issues:\n## Issues\n- [issue] — one line per issue, plain language\n\n## Suggestions (only if you have them)\n- [suggestion] — one line per suggestion, plain language\n\nRules:\n- Use plain language, not robotic analysis\n- Focus only on actual code changes, not boilerplate\n- Skip obvious things (like "add tests") unless critical\n- Each issue/suggestion must be one simple, clear sentence\n- No need for detailed explanations unless something is genuinely confusing\n- If code is clean, just say LGTM — no forced feedback\n- Never add filler sections like "Good Practices" or "Summary"',
       user: `PR Title: ${prTitle}\n\nDiff:\n${truncatedDiff}`,
       temperature: 0.2,
     });
@@ -112,39 +112,19 @@ export async function generateAIReview(
   }
 }
 
-function generateHeuristicReview(diff: string, prTitle: string): string {
-  const sections: string[] = [
-    `# Code Review: ${prTitle}`,
-    "",
-  ];
-
+function generateHeuristicReview(diff: string, _prTitle: string): string {
   const lines = diff.split("\n");
   const addedLines = lines.filter((l) => l.startsWith("+") && !l.startsWith("+++"));
-  const removedLines = lines.filter((l) => l.startsWith("-") && !l.startsWith("---"));
 
-  // Check for potential issues
   const issues: string[] = [];
   const suggestions: string[] = [];
-  const good: string[] = [];
 
   // Check for console.log
   const consoleLogCount = addedLines.filter((l) =>
     /console\.log/.test(l)
   ).length;
   if (consoleLogCount > 0) {
-    issues.push(
-      `- Found ${consoleLogCount} \`console.log\` statement(s) — consider removing before merge`
-    );
-  }
-
-  // Check for TODO/FIXME
-  const todoCount = addedLines.filter((l) =>
-    /TODO|FIXME|HACK|XXX/i.test(l)
-  ).length;
-  if (todoCount > 0) {
-    suggestions.push(
-      `- Found ${todoCount} TODO/FIXME comment(s) — consider addressing or creating issues`
-    );
+    issues.push(`Found ${consoleLogCount} console.log — remove before merge`);
   }
 
   // Check for hardcoded secrets
@@ -152,58 +132,40 @@ function generateHeuristicReview(diff: string, prTitle: string): string {
     /password\s*=\s*['"]|api_key\s*=\s*['"]|secret\s*=\s*['"]/i.test(l)
   ).length;
   if (secretPatterns > 0) {
-    issues.push(
-      `- **Possible hardcoded secrets detected** — use environment variables instead`
-    );
+    issues.push("Possible hardcoded secrets — use env variables");
+  }
+
+  // Check for TODO/FIXME
+  const todoCount = addedLines.filter((l) =>
+    /TODO|FIXME|HACK|XXX/i.test(l)
+  ).length;
+  if (todoCount > 0) {
+    suggestions.push(`${todoCount} TODO/FIXME comment(s) — consider resolving`);
   }
 
   // Check for large diff
   if (addedLines.length > 500) {
-    suggestions.push(
-      `- Large diff (${addedLines.length} additions) — consider splitting into smaller PRs`
-    );
-  }
-
-  // Good practices
-  if (addedLines.length > 0 && removedLines.length === 0 && consoleLogCount === 0) {
-    good.push("- Clean additions without removals suggests additive change");
-  }
-
-  if (issues.length === 0 && secretPatterns === 0) {
-    good.push("- No critical issues detected in the diff");
-  }
-
-  if (addedLines.some((l) => /test|spec/i.test(l))) {
-    good.push("- Test coverage included");
+    suggestions.push("Large diff — consider splitting into smaller PRs");
   }
 
   // Build output
-  sections.push("## 🔴 Critical", "");
+  if (issues.length === 0 && suggestions.length === 0) {
+    return "## LGTM ✅\n\nCode changes look clean. No issues spotted.";
+  }
+
+  const sections: string[] = [];
+
   if (issues.length > 0) {
-    sections.push(...issues);
-  } else {
-    sections.push("No critical issues found.");
+    sections.push("## Issues");
+    sections.push(...issues.map((i) => `- ${i}`));
+    sections.push("");
   }
 
-  sections.push("", "## 🟡 Suggestions", "");
   if (suggestions.length > 0) {
-    sections.push(...suggestions);
-  } else {
-    sections.push("No suggestions at this time.");
+    sections.push("## Suggestions");
+    sections.push(...suggestions.map((s) => `- ${s}`));
+    sections.push("");
   }
 
-  sections.push("", "## 🟢 Good Practices", "");
-  if (good.length > 0) {
-    sections.push(...good);
-  } else {
-    sections.push("Code changes look reasonable.");
-  }
-
-  sections.push(
-    "",
-    "---",
-    "*Review generated automatically. Please verify findings manually.*"
-  );
-
-  return sections.join("\n");
+  return sections.join("\n").trimEnd();
 }

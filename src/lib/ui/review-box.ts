@@ -74,13 +74,12 @@ export function renderReviewBox(title: string, review: string): string {
 export function hasCriticalIssues(review: string): boolean {
   if (!review) return false;
 
-  const criticalMatch = review.match(/^##\s+(🔴\s*)?Critical/im);
-  if (!criticalMatch) return false;
+  // LGTM means no critical issues
+  if (review.includes("LGTM ✅")) return false;
 
-  const noIssuesMatch = review.match(
-    /Critical\s*\n\s*No critical issues (?:found|detected)/im,
-  );
-  if (noIssuesMatch) return false;
+  // Check for Issues section with actual content
+  const issuesMatch = review.match(/^##\s+(?:🔴\s*)?Issues?\s*\n\s*(-\s+.+)/im);
+  if (!issuesMatch) return false;
 
   return true;
 }

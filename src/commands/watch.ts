@@ -58,51 +58,69 @@ export function registerWatchCommand(program: Command): void {
 
       let polling = false;
 
-      const timer = setInterval(async () => {
+      const poll = async (): Promise<void> => {
         if (polling) return;
         polling = true;
 
         try {
           const prs = await getReviewRequests(username);
 
+          let processedAny = false;
+
           for (const pr of prs) {
             if (knownPRs.has(pr.html_url)) continue;
             knownPRs.add(pr.html_url);
+            processedAny = true;
 
             const { owner, repo } = extractOwnerRepo(pr.html_url);
 
-            sendReviewNotification({
-              title: pr.title,
-              html_url: pr.html_url,
-              author: pr.author,
-              repo: `${owner}/${repo}`,
-            });
-
-            process.stdout.write(
-              pc.yellow('New review request: ') + `${pr.title}\n`,
-            );
-
-            const choice = await showReviewMenu(pr);
-
-            if (choice === 'browser') {
-              await openInBrowser(pr.html_url);
-            } else if (choice === 'ai') {
-              const fetchSpinner = createSpinner('Fetching PR diff...');
-              const diff = await getPRDiff({
-                owner,
-                repo,
-                pullNumber: pr.number,
+            try {
+              sendReviewNotification({
+                title: pr.title,
+                html_url: pr.html_url,
+                author: pr.author,
+                repo: `${owner}/${repo}`,
               });
-              spinnerSucceed(fetchSpinner, 'Diff fetched');
 
-              const aiSpinner = createSpinner('Generating AI review...');
-              const review = await generateAIReview(diff, pr.title);
-              spinnerSucceed(aiSpinner, 'Review complete');
+              process.stdout.write(
+                pc.yellow('New review request: ') + `${pr.title}\n`,
+              );
 
-              displayReview(pr.number, pr.title, review);
-              await promptReviewAction({ owner, repo, pullNumber: pr.number, review });
-              console.log('');
+              const choice = await showReviewMenu(pr);
+
+              if (choice === 'browser') {
+                await openInBrowser(pr.html_url);
+              } else if (choice === 'ai') {
+                const fetchSpinner = createSpinner('Fetching PR diff...');
+                const diff = await getPRDiff({
+                  owner,
+                  repo,
+                  pullNumber: pr.number,
+                });
+                spinnerSucceed(fetchSpinner, 'Diff fetched');
+
+                const aiSpinner = createSpinner('Generating AI review...');
+                const review = await generateAIReview(diff, pr.title);
+                spinnerSucceed(aiSpinner, 'Review complete');
+
+                displayReview(pr.number, pr.title, review);
+                await promptReviewAction({ owner, repo, pullNumber: pr.number, review });
+                console.log('');
+              }
+
+              await new Promise(resolve => setTimeout(resolve, 500));
+            } catch (err) {
+              process.stderr.write(
+                pc.yellow(`Warning: Error processing PR #${pr.number}, continuing...\n`),
+              );
+              await new Promise(resolve => setTimeout(resolve, 300));
             }
+          }
+
+          if (processedAny) {
+            process.stdout.write(
+              pc.dim(`\nStill watching... (polling every ${intervalSeconds}s)\n\n`),
+            );
           }
         } catch {
           process.stderr.write(
@@ -111,7 +129,11 @@ export function registerWatchCommand(program: Command): void {
         } finally {
           polling = false;
         }
-      }, intervalMs);
+      };
+
+      // Poll immediately on start, then at interval
+      poll();
+      const timer = setInterval(poll, intervalMs);
 
       const cleanup = (): void => {
         clearInterval(timer);

@@ -39,4 +39,14 @@ process.on('uncaughtException', (error: Error) => {
   process.exit(1);
 });
 
+process.on('unhandledRejection', (reason: unknown) => {
+  // For watch command, just log and continue — don't kill the process
+  if (process.argv[2] === 'watch') {
+    console.error(pc.yellow(`Warning: ${reason}`));
+    return;
+  }
+  console.error(pc.red(`Error: ${reason}`));
+  process.exit(1);
+});
+
 program.parse(process.argv);

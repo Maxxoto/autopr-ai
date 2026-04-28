@@ -37,7 +37,7 @@ export async function promptReviewAction(options: {
     choices,
   }) as ReviewAction;
 
-  const reviewBody = `## 🤖 AI Review by autopr\n\n${options.review}`;
+  const reviewBody = options.review;
 
   switch (action) {
     case 'approve': {
