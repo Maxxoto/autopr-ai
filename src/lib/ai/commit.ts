@@ -49,7 +49,30 @@ export async function generateCommitMessage(
     }
 
     const raw = await callAI({
-      system: 'You are a commit message generator following Conventional Commits v1.0.0. Analyze the diff and generate a commit message. Return ONLY valid JSON: {"type": "feat|fix|...", "scope": "optional", "description": "imperative mood ≤72 chars", "body": "optional detail", "breaking": false}',
+      system: [
+        'You are a commit message generator following Conventional Commits v1.0.0.',
+        'Analyze the diff and generate a commit message.',
+        '',
+        'CRITICAL RULES:',
+        '- description MUST be imperative mood (as if giving an order): "add", "fix", "remove", "update", NOT "adding", "fixing", "removed", "updates", "improvement", "reporting"',
+        '- Valid types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert',
+        '- description ≤72 chars, no period at end',
+        '- scope is optional, omit if unclear',
+        '',
+        'GOOD examples:',
+        '- {"type":"fix","description":"report correct status code in error handler"}',
+        '- {"type":"feat","description":"add pagination to user list endpoint"}',
+        '- {"type":"chore","description":"improve performance of database queries"}',
+        '- {"type":"revert","description":"revert database migration"}',
+        '- {"type":"docs","description":"update installation instructions"}',
+        '',
+        'BAD examples (DO NOT generate these):',
+        '- {"type":"fix","description":"reporting abc"} ← "reporting" is NOT imperative',
+        '- {"type":"chore","description":"improvement performance"} ← "improvement" is NOT imperative',
+        '- {"type":"feat","description":"added new feature"} ← "added" is past tense, NOT imperative',
+        '',
+        'Return ONLY valid JSON: {"type":"feat|fix|...","scope":"optional","description":"imperative mood ≤72 chars","body":"optional detail","breaking":false}',
+      ].join('\n'),
       user: userParts.join('\n'),
       temperature: 0.3,
     });

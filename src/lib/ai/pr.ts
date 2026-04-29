@@ -11,7 +11,20 @@ export async function generatePRTitle(
     ].join("\n");
 
     const title = await callAI({
-      system: 'Generate a concise PR title (≤72 chars, imperative mood) from these changes. Return ONLY the title, no quotes.',
+      system: [
+        'Generate a concise PR title from these changes.',
+        '',
+        'RULES:',
+        '- Use Conventional Commits format: type: description (e.g. "feat: add user authentication")',
+        '- Imperative mood: "add", "fix", "remove", NOT "adding", "fixing", "removed"',
+        '- ≤72 chars, no period at end',
+        '- Valid types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert',
+        '',
+        'GOOD: "feat: add user authentication", "fix: resolve race condition in token refresh"',
+        'BAD: "feat: adding user auth", "fix: fixed race condition"',
+        '',
+        'Return ONLY the title, no quotes.',
+      ].join('\n'),
       user: userContent,
       temperature: 0.3,
     });
