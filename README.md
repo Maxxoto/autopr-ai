@@ -1,6 +1,6 @@
 <div align="center">
 
-# `autopr ⚡`
+# `autopr-ai⚡`
 
 **Stop writing commit messages. Stop writing PR descriptions. Start shipping.**
 
@@ -43,12 +43,12 @@ creates pull requests, and reviews code — all from your terminal.
 
 **One command to set up, then three commands to ship.**
 
-| Command | Alias | What happens |
-|---------|-------|-------------|
-| `autopr onboard` | — | First-time setup: GitHub auth + AI provider → ready to go |
-| `autopr cm` | `commit` | Reads your staged diff → generates a conventional commit → commits |
-| `autopr cr` | `create` | Reads your branch diff → generates PR title + description → pushes + creates PR |
-| `autopr watch` | — | Polls GitHub → notifies when you're assigned as reviewer → AI review or open in browser |
+| Command          | Alias    | What happens                                                                            |
+| ---------------- | -------- | --------------------------------------------------------------------------------------- |
+| `autopr onboard` | —        | First-time setup: GitHub auth + AI provider → ready to go                               |
+| `autopr cm`      | `commit` | Reads your staged diff → generates a conventional commit → commits                      |
+| `autopr cr`      | `create` | Reads your branch diff → generates PR title + description → pushes + creates PR         |
+| `autopr watch`   | —        | Polls GitHub → notifies when you're assigned as reviewer → AI review or open in browser |
 
 Plus `autopr auth` to manage your GitHub token and `autopr review` to AI-review any PR.
 
@@ -324,14 +324,14 @@ autopr auth status              # show current auth state
 
 `autopr` supports **6 AI providers** through the [Vercel AI SDK](https://ai-sdk.dev/):
 
-| Provider | Models | Cost |
-|----------|--------|------|
-| **OpenAI** | GPT-4o, o1, o3 | $$$ Pay-per-use |
-| **Anthropic** | Claude Sonnet 4, Claude Haiku | $$$ Pay-per-use |
-| **DeepSeek** | DeepSeek Chat, DeepSeek Reasoner | $ Very affordable |
-| **Groq** | GPT-OSS 20B | Free tier available |
-| **OpenRouter** | All providers via single key | $$ Depends on model |
-| **OpenAI-Compatible** | LiteLLM, Ollama, any OpenAI API | Free Self-hosted |
+| Provider              | Models                           | Cost                |
+| --------------------- | -------------------------------- | ------------------- |
+| **OpenAI**            | GPT-4o, o1, o3                   | $$$ Pay-per-use     |
+| **Anthropic**         | Claude Sonnet 4, Claude Haiku    | $$$ Pay-per-use     |
+| **DeepSeek**          | DeepSeek Chat, DeepSeek Reasoner | $ Very affordable   |
+| **Groq**              | GPT-OSS 20B                      | Free tier available |
+| **OpenRouter**        | All providers via single key     | $$ Depends on model |
+| **OpenAI-Compatible** | LiteLLM, Ollama, any OpenAI API  | Free Self-hosted    |
 
 Configure via `autopr onboard` (recommended) or environment variables:
 
