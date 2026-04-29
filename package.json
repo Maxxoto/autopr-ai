@@ -9,7 +9,8 @@
         "url": "https://github.com/Maxxoto/autopr-ai.git"
     },
     "bin": {
-        "autopr": "./dist/index.js"
+        "autopr": "./dist/index.js",
+        "autopr-ai": "./dist/index.js"
     },
     "scripts": {
         "autopr": "tsx src/index.ts",
