@@ -1,67 +1,67 @@
 {
-  "name": "autopr-ai",
-  "version": "0.1.3",
-  "description": "CLI tool for automated PR review, smart commits, and PR creation",
-  "type": "module",
-  "preferGlobal": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Maxxoto/autopr.git"
-  },
-  "bin": {
-    "autopr": "./dist/index.js"
-  },
-  "scripts": {
-    "autopr": "tsx src/index.ts",
-    "dev": "tsx src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
-    "lint": "tsc --noEmit",
-    "prepublishOnly": "npm run build",
-    "link": "npm link"
-  },
-  "files": [
-    "dist",
-    "README.md"
-  ],
-  "keywords": [
-    "cli",
-    "github",
-    "pr",
-    "automation",
-    "git"
-  ],
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.71",
-    "@ai-sdk/deepseek": "^2.0.29",
-    "@ai-sdk/groq": "^3.0.35",
-    "@ai-sdk/openai": "^3.0.53",
-    "@inquirer/password": "^5.0.12",
-    "@inquirer/prompts": "^8.4.2",
-    "@octokit/plugin-paginate-rest": "^14.0.0",
-    "@octokit/rest": "^22.0.1",
-    "@openrouter/ai-sdk-provider": "^2.8.1",
-    "ai": "^6.0.168",
-    "commander": "^14.0.3",
-    "conf": "^15.1.0",
-    "node-notifier": "^10.0.1",
-    "open": "^10.1.0",
-    "ora": "^9.4.0",
-    "picocolors": "^1.1.1",
-    "simple-git": "^3.36.0"
-  },
-  "devDependencies": {
-    "@types/node": "^24.5.2",
-    "@types/node-notifier": "^8.0.5",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.2",
-    "vitest": "^4.1.4"
-  }
+    "name": "autopr-ai",
+    "version": "0.1.4",
+    "description": "CLI tool for automated PR review, smart commits, and PR creation",
+    "type": "module",
+    "preferGlobal": true,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Maxxoto/autopr.git"
+    },
+    "bin": {
+        "autopr": "./dist/index.js"
+    },
+    "scripts": {
+        "autopr": "tsx src/index.ts",
+        "dev": "tsx src/index.ts",
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "test": "vitest run --passWithNoTests",
+        "test:watch": "vitest",
+        "typecheck": "tsc --noEmit",
+        "lint": "tsc --noEmit",
+        "prepublishOnly": "npm run build",
+        "link": "npm link"
+    },
+    "files": [
+        "dist",
+        "README.md"
+    ],
+    "keywords": [
+        "cli",
+        "github",
+        "pr",
+        "automation",
+        "git"
+    ],
+    "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "dependencies": {
+        "@ai-sdk/anthropic": "^3.0.71",
+        "@ai-sdk/deepseek": "^2.0.29",
+        "@ai-sdk/groq": "^3.0.35",
+        "@ai-sdk/openai": "^3.0.53",
+        "@inquirer/password": "^5.0.12",
+        "@inquirer/prompts": "^8.4.2",
+        "@octokit/plugin-paginate-rest": "^14.0.0",
+        "@octokit/rest": "^22.0.1",
+        "@openrouter/ai-sdk-provider": "^2.8.1",
+        "ai": "^6.0.168",
+        "commander": "^14.0.3",
+        "conf": "^15.1.0",
+        "node-notifier": "^10.0.1",
+        "open": "^10.1.0",
+        "ora": "^9.4.0",
+        "picocolors": "^1.1.1",
+        "simple-git": "^3.36.0"
+    },
+    "devDependencies": {
+        "@types/node": "^24.5.2",
+        "@types/node-notifier": "^8.0.5",
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.2",
+        "vitest": "^4.1.4"
+    }
 }

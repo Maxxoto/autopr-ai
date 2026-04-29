@@ -15,7 +15,7 @@ const program = new Command();
 program
   .name('autopr')
   .description('CLI tool for automated PR review, smart commits, and PR creation')
-  .version('0.1.3');
+  .version('0.1.4');
 
 registerAuthCommand(program);
 registerCommitCommand(program);
