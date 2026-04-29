@@ -13,9 +13,9 @@ import { isConfigured } from './lib/config/store.js';
 const program = new Command();
 
 program
-  .name('autopr')
+  .name('autopr-ai')
   .description('CLI tool for automated PR review, smart commits, and PR creation')
-  .version('0.1.4');
+  .version('0.1.9');
 
 registerAuthCommand(program);
 registerCommitCommand(program);
