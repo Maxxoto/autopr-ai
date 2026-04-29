@@ -1,6 +1,6 @@
 {
     "name": "autopr-ai",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "description": "CLI tool for automated PR review, smart commits, and PR creation",
     "type": "module",
     "preferGlobal": true,
