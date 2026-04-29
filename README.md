@@ -4,7 +4,7 @@
 
 **Stop writing commit messages. Stop writing PR descriptions. Start shipping.**
 
-[![npm version](https://img.shields.io/npm/v/@maxxoto/autopr?color=blue)](https://www.npmjs.com/package/@maxxoto/autopr)
+[![npm version](https://img.shields.io/npm/v/autopr-ai?color=blue)](https://www.npmjs.com/package/autopr-ai)
 [![license](https://img.shields.io/github/license/Maxxoto/autopr)](https://github.com/Maxxoto/autopr/blob/main/LICENSE)
 [![node](https://img.shields.io/node/v/autopr)](https://nodejs.org)
 
@@ -59,7 +59,7 @@ Plus `autopr auth` to manage your GitHub token and `autopr review` to AI-review 
 ### npm (recommended)
 
 ```bash
-npm install -g @maxxoto/autopr
+npm install -g autopr-ai
 ```
 
 ### Homebrew
@@ -329,7 +329,7 @@ autopr auth status              # show current auth state
 | **OpenAI** | GPT-4o, o1, o3 | $$$ Pay-per-use |
 | **Anthropic** | Claude Sonnet 4, Claude Haiku | $$$ Pay-per-use |
 | **DeepSeek** | DeepSeek Chat, DeepSeek Reasoner | $ Very affordable |
-| **Groq** | GPT-OSS 120B | Free tier available |
+| **Groq** | GPT-OSS 20B | Free tier available |
 | **OpenRouter** | All providers via single key | $$ Depends on model |
 | **OpenAI-Compatible** | LiteLLM, Ollama, any OpenAI API | Free Self-hosted |
 

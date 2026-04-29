@@ -88,6 +88,9 @@ export function registerOnboardCommand(program: Command): void {
           console.log(pc.dim('  ──────────────────'));
           console.log('');
 
+          console.log(pc.dim(`  ${pc.yellow('💡 Tip:')} Groq offers a free tier — great for getting started!`));
+          console.log('');
+
           const choices = Object.entries(PROVIDER_DEFAULTS).map(([key, val]) => ({
             name: `${val.label} — ${val.costTier}`,
             value: key as AIProvider,

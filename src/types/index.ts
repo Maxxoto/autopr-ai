@@ -45,9 +45,9 @@ export const PROVIDER_DEFAULTS: Record<AIProvider, {
     needsBaseURL: false,
   },
   groq: {
-    model: 'openai/gpt-oss-120b',
+    model: 'openai/gpt-oss-20b',
     envKey: 'GROQ_API_KEY',
-    label: 'Groq (GPT-OSS 120B)',
+    label: 'Groq (GPT-OSS 20B)',
     costTier: 'Free tier available',
     needsBaseURL: false,
   },
