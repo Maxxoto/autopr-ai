@@ -1,6 +1,6 @@
 <div align="center">
 
-# `autopr`
+# `autopr ⚡`
 
 **Stop writing commit messages. Stop writing PR descriptions. Start shipping.**
 
@@ -389,7 +389,7 @@ Interested in contributing? Check out the **[Contributing Guide](CONTRIBUTING.md
 
 ## License
 
-[MIT](LICENSE) — use it however you want.
+[MIT](LICENSE) — use it however you want ❤️.
 
 ---
 
