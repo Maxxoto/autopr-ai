@@ -22,7 +22,7 @@ creates pull requests, and reviews code — all from your terminal.
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                                                              │
-│   $ autopr cm                                                │
+│   $ autopr-ai cm                                                │
 │                                                              │
 │   ⠹ Analyzing changes...                                    │
 │   ✔ feat(api): add JWT refresh token rotation               │
@@ -31,7 +31,7 @@ creates pull requests, and reviews code — all from your terminal.
 │                                                              │
 ├──────────────────────────────────────────────────────────────┤
 │                                                              │
-│   $ autopr cr                                                │
+│   $ autopr-ai cr                                                │
 │                                                              │
 │   ⠹ Generating PR content...                                │
 │   Title: Implement token refresh with rotation strategy      │
@@ -45,12 +45,12 @@ creates pull requests, and reviews code — all from your terminal.
 
 | Command          | Alias    | What happens                                                                            |
 | ---------------- | -------- | --------------------------------------------------------------------------------------- |
-| `autopr onboard` | —        | First-time setup: GitHub auth + AI provider → ready to go                               |
-| `autopr cm`      | `commit` | Reads your staged diff → generates a conventional commit → commits                      |
-| `autopr cr`      | `create` | Reads your branch diff → generates PR title + description → pushes + creates PR         |
-| `autopr watch`   | —        | Polls GitHub → notifies when you're assigned as reviewer → AI review or open in browser |
+| `autopr-ai onboard` | —        | First-time setup: GitHub auth + AI provider → ready to go                               |
+| `autopr-ai cm`      | `commit` | Reads your staged diff → generates a conventional commit → commits                      |
+| `autopr-ai cr`      | `create` | Reads your branch diff → generates PR title + description → pushes + creates PR         |
+| `autopr-ai watch`   | —        | Polls GitHub → notifies when you're assigned as reviewer → AI review or open in browser |
 
-Plus `autopr auth` to manage your GitHub token and `autopr review` to AI-review any PR.
+Plus `autopr-ai auth` to manage your GitHub token and `autopr-ai review` to AI-review any PR.
 
 ---
 
@@ -106,7 +106,7 @@ npm run autopr -- cr          # create PR
 ### 1. Onboard (one-time setup)
 
 ```bash
-$ autopr onboard
+$ autopr-ai onboard
 ```
 
 ```
@@ -144,10 +144,10 @@ $ autopr onboard
     AI:      OpenAI — gpt-4o — sk-...7x3k
 
   Try these commands:
-    autopr cm      — smart commits
-    autopr cr      — create PRs
-    autopr review  — AI code review
-    autopr watch   — watch for reviews
+    autopr-ai cm      — smart commits
+    autopr-ai cr      — create PRs
+    autopr-ai review  — AI code review
+    autopr-ai watch   — watch for reviews
 ```
 
 **That's it.** One command and you're ready to go.
@@ -156,8 +156,8 @@ $ autopr onboard
 <summary>Manual setup (alternative)</summary>
 
 ```bash
-autopr auth login                    # GitHub auth
-autopr auth status                   # Check auth state
+autopr-ai auth login                    # GitHub auth
+autopr-ai auth status                   # Check auth state
 ```
 
 Set your AI provider via environment variables or `~/.config/autopr/` config.
@@ -168,7 +168,7 @@ Set your AI provider via environment variables or `~/.config/autopr/` config.
 
 ```bash
 git add .
-autopr cm
+autopr-ai cm
 ```
 
 The CLI analyzes your staged diff, sends it to your configured LLM, and generates a conventional commit message:
@@ -189,7 +189,7 @@ Don't like the generated message? Hit **No** and type your own.
 ### 3. Smart PR
 
 ```bash
-autopr cr
+autopr-ai cr
 ```
 
 ```
@@ -219,7 +219,7 @@ autopr cr
 ### 4. Watch for Reviews
 
 ```bash
-autopr watch
+autopr-ai watch
 ```
 
 ```
@@ -252,68 +252,68 @@ Select **AI Review Assist** and get an instant structured review:
 
 ## Commands
 
-### `autopr onboard`
+### `autopr-ai onboard`
 
 Guided first-time setup for GitHub auth and AI provider.
 
 ```bash
-autopr onboard    # interactive setup wizard
+autopr-ai onboard    # interactive setup wizard
 ```
 
 Running bare `autopr` with no subcommand will auto-launch onboard if not yet configured.
 
-### `autopr cm` / `autopr commit`
+### `autopr-ai cm` / `autopr-ai commit`
 
 Generate a conventional commit from staged changes.
 
 ```bash
-autopr cm              # analyze staged diff → commit
-autopr cm --no-verify  # skip git hooks
+autopr-ai cm              # analyze staged diff → commit
+autopr-ai cm --no-verify  # skip git hooks
 ```
 
 Supports all conventional commit types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 
-### `autopr cr` / `autopr create`
+### `autopr-ai cr` / `autopr-ai create`
 
 Create a PR with AI-generated title and description.
 
 ```bash
-autopr cr                 # auto-detect base branch
-autopr cr --base develop  # target specific branch
-autopr cr --draft         # create as draft
-autopr cr --no-push       # skip pushing to remote
+autopr-ai cr                 # auto-detect base branch
+autopr-ai cr --base develop  # target specific branch
+autopr-ai cr --draft         # create as draft
+autopr-ai cr --no-push       # skip pushing to remote
 ```
 
-### `autopr review [PR number]`
+### `autopr-ai review [PR number]`
 
 AI-powered code review for a pull request.
 
 ```bash
-autopr review          # review PR for current branch
-autopr review 42       # review specific PR
-autopr review 42 --repo owner/repo
+autopr-ai review          # review PR for current branch
+autopr-ai review 42       # review specific PR
+autopr-ai review 42 --repo owner/repo
 ```
 
-### `autopr watch`
+### `autopr-ai watch`
 
 Watch for PR review assignments and get desktop notifications.
 
 ```bash
-autopr watch                  # poll every 60 seconds
-autopr watch --interval 30    # poll every 30 seconds
+autopr-ai watch                  # poll every 60 seconds
+autopr-ai watch --interval 30    # poll every 30 seconds
 ```
 
 Press `Ctrl+C` to stop watching.
 
-### `autopr auth`
+### `autopr-ai auth`
 
 Manage GitHub authentication.
 
 ```bash
-autopr auth login              # interactive login (opens browser)
-autopr auth login --token ghp_ # non-interactive
-autopr auth logout              # remove credentials
-autopr auth status              # show current auth state
+autopr-ai auth login              # interactive login (opens browser)
+autopr-ai auth login --token ghp_ # non-interactive
+autopr-ai auth logout              # remove credentials
+autopr-ai auth status              # show current auth state
 ```
 
 ---
@@ -333,7 +333,7 @@ autopr auth status              # show current auth state
 | **OpenRouter**        | All providers via single key     | $$ Depends on model |
 | **OpenAI-Compatible** | LiteLLM, Ollama, any OpenAI API  | Free Self-hosted    |
 
-Configure via `autopr onboard` (recommended) or environment variables:
+Configure via `autopr-ai onboard` (recommended) or environment variables:
 
 ```bash
 # OpenAI
