@@ -6,7 +6,7 @@
     "preferGlobal": true,
     "repository": {
         "type": "git",
-        "url": "https://github.com/Maxxoto/autopr.git"
+        "url": "https://github.com/Maxxoto/autopr-ai.git"
     },
     "bin": {
         "autopr": "./dist/index.js"
