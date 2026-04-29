@@ -5,7 +5,7 @@
 **Stop writing commit messages. Stop writing PR descriptions. Start shipping.**
 
 [![npm version](https://img.shields.io/npm/v/autopr-ai?color=blue)](https://www.npmjs.com/package/autopr-ai)
-[![license](https://img.shields.io/github/license/Maxxoto/autopr)](https://github.com/Maxxoto/autopr/blob/main/LICENSE)
+[![license](https://img.shields.io/github/license/Maxxoto/autopr-ai)](https://github.com/Maxxoto/autopr-ai/blob/main/LICENSE)
 [![node](https://img.shields.io/node/v/autopr)](https://nodejs.org)
 
 AI-powered CLI that watches your repo, generates conventional commits,<br>
@@ -71,8 +71,8 @@ brew install @maxxoto/tap/autopr
 ### From source
 
 ```bash
-git clone https://github.com/Maxxoto/autopr.git
-cd autopr
+git clone https://github.com/Maxxoto/autopr-ai.git
+cd autopr-ai
 npm install
 npm link        # makes `autopr` available globally
 ```
@@ -81,14 +81,14 @@ npm link        # makes `autopr` available globally
 <summary>Run without installing (npx)</summary>
 
 ```bash
-npx autopr --help
+npx autopr-ai --help
 ```
 
 Or use the dev script:
 
 ```bash
-git clone https://github.com/Maxxoto/autopr.git
-cd autopr
+git clone https://github.com/Maxxoto/autopr-ai.git
+cd autopr-ai
 npm install
 npm run autopr -- --help
 npm run autopr -- cm          # commit
@@ -397,6 +397,6 @@ Interested in contributing? Check out the **[Contributing Guide](CONTRIBUTING.md
 
 **Built for developers who'd rather write code than write about code.**
 
-[Report a Bug](https://github.com/Maxxoto/autopr/issues) · [Request a Feature](https://github.com/Maxxoto/autopr/issues) · [Star on GitHub](https://github.com/Maxxoto/autopr)
+[Report a Bug](https://github.com/Maxxoto/autopr-ai/issues) · [Request a Feature](https://github.com/Maxxoto/autopr-ai/issues) · [Star on GitHub](https://github.com/Maxxoto/autopr-ai)
 
 </div>
